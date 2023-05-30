@@ -44,7 +44,7 @@ selected = option_menu(
         default_index=0,
         orientation="horizontal",
         styles={
-            "menu-title":{"font-size" : "35px","font-weight" : "bold"},
+            "menu-title":{"font-size" : "35px","font-weight" : "bold","color": "green"},
             "container": {"padding": "0!important", "background-color": "white","height": "50px"},
             "icon": {"color": "orange", "font-size": "15px"}, 
             "nav-link": {"font-size": "20px", "text-align": "left", "margin":"0px", "--hover-color": "#eee"},
@@ -157,7 +157,7 @@ if selected=="Data Analysis":
     st.write("### Using TSNE")
     with st.spinner('Running the TSNE technique (takes about 30 seconds)...'):
         xfortsne=train.drop(['Activity','subject'],axis=1)
-        tsne=TSNE(n_components=2,random_state=0,n_iter=500).fit_transform(xfortsne)
+        tsne=TSNE(n_components=2,random_state=0,n_iter=1000).fit_transform(xfortsne)
         st.success('Done!')
     fig = plt.figure(figsize=(5,3))
     sns.scatterplot(x=tsne[:,0],y=tsne[:,1],hue=train['Activity'])
@@ -170,12 +170,12 @@ if selected=="Prediction":
     ytest=test.Activity
     st.write("##### Shape of train data :",xtrain.shape)
     st.write("##### Shape of test data :",xtest.shape)
-    res=st.selectbox("#### Choose The Classification Model : ",["Logistic Regression","SVM","Decision Tree & Random Forest"],index=0)
+    res=st.selectbox("#### Choose The Classification Model : ",["Logistic Regression","SVM","Decision Tree & Random Forest"],index=1)
     if res=="Logistic Regression":
         with st.spinner('Running the Logistic Regression model (takes about a minute)...'):
-             parameters={'max_iter':[100,200,500]}
+             parameters={'max_iter':[500,100,1500]}
              lr_classifier=LogisticRegression()
-             lr_classifier_rs=RandomizedSearchCV(lr_classifier,param_distributions=parameters,cv=3,random_state=42)
+             lr_classifier_rs=RandomizedSearchCV(lr_classifier,param_distributions=parameters,random_state=42)
              lr_classifier_rs.fit(xtrain,ytrain)
              y_pred_lr=lr_classifier_rs.predict(xtest)
              lr_acc=accuracy_score(y_true=ytest,y_pred=y_pred_lr)
